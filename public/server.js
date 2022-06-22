@@ -34,11 +34,13 @@ function login(user, pass, req, res) {
         req.session.user = user;
         req.session.admin = true;
         req.session.logged = true;
+        req.session.cookie.maxAge = 30000;
         res.redirect('/index')
     } else if (user == 'user' && pass == '1111') {
         req.session.user = user;
         req.session.admin = false;
         req.session.logged = true;
+        req.session.cookie.maxAge = 30000;
         res.redirect('/index');
     } else {
 
@@ -49,11 +51,13 @@ function login(user, pass, req, res) {
 
 
 app.get('/login', function (req, res) {
+    if (req.session.logged == false) {
+        res.render('pages/login', {
 
-    res.render('pages/login', {
-
-    });
-
+        });
+    } else {
+        res.redirect('/index');
+    }
 
 })
 
@@ -67,11 +71,14 @@ app.post('/login', function (req, res) {
 
 app.get('/index', function (req, res) {
     let user = req.session.user;
+
     if (req.session.admin == true) {
+        req.session.cookie.maxAge = 30000;
         res.render('pages/indexAdm', {
             user: user,
         });
     } else if (req.session.logged == true) {
+        req.session.cookie.maxAge = 30000;
         res.render('pages/index', {
             user: user,
         });
@@ -96,7 +103,7 @@ app.post('/logout', (req, res) => {
         }
     })
 });
-    
+
 
 
 
